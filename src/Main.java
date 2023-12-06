@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class Main {
     private static final String FILE_PATH = "src/resources/english-turkish.csv";
     private static final String[] lastFoundResult = new String[2];
-    private static final HashMap<String,String> dictionary = new HashMap<>();
+    private static final HashMap<String, String> dictionary = new HashMap<>();
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -20,8 +20,9 @@ public class Main {
             do {
                 userInput = scanner.nextLine().toLowerCase().trim();
                 userExited = userInput.equals("e");
+
                 if (!userExited) {
-                    searchForUserInput(dictionary, userInput);
+                    searchForUserInput(userInput);
                 }
             } while (!userExited);
 
@@ -31,33 +32,39 @@ public class Main {
         System.out.println("you exited the program");
     }
 
-    public static void searchForUserInput(HashMap<String,String> dictionary , String userInput) {
+    public static void searchForUserInput(String userInput) {
         String searchResult;
 
         if (userInput.equals(lastFoundResult[0])) {
             System.out.println(userInput + ": " + lastFoundResult[1]);
         }
-        searchResult= dictionary.get(userInput);
-        boolean isMatch = searchResult !=null;
-        if(isMatch){
-            System.out.println(userInput + ": "+searchResult);
-            lastFoundResult[0] =userInput;
-            lastFoundResult[1]=searchResult;
-        }else {
-            System.out.println("no result for: "+userInput);
+        searchResult = dictionary.get(userInput);
+        boolean isMatch = searchResult != null;
+
+        if (isMatch) {
+            System.out.println(userInput + ": " + searchResult);
+            lastFoundResult[0] = userInput;
+            lastFoundResult[1] = searchResult;
+        } else {
+            System.out.println("no result for: " + userInput);
         }
     }
 
-    public static void copyDictionary(BufferedReader bufferedReader){
+    public static void copyDictionary(BufferedReader bufferedReader) {
         String line;
         String[] splitLine;
-        try{
-            while ((line = bufferedReader.readLine()) != null){
+        String result;
+        int keyLength;
+        try {
+            while ((line = bufferedReader.readLine()) != null) {
                 splitLine = line.split(",");
-                dictionary.put(splitLine[0],splitLine[1]);
+                keyLength = splitLine[0].length() + 1; //+1 is because of comma included;
+                result = line.substring(keyLength).replaceAll(",*$", "");
+
+                dictionary.put(splitLine[0], result);
             }
             bufferedReader.close();
-        }catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("something went wrong..");
         }
     }
